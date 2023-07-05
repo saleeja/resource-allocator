@@ -10,9 +10,9 @@ class Course(models.Model):
 
     def __str__(self):
         return self.Course
-    class Meta:
-        verbose_name_plural="Courses"
 
+    class Meta:
+        verbose_name_plural = "Courses"
 
 
 class Trainer(models.Model):
@@ -21,9 +21,9 @@ class Trainer(models.Model):
 
     def __str__(self):
         return self.TrainerName
-    class Meta:
-        verbose_name_plural="Trainers"
 
+    class Meta:
+        verbose_name_plural = "Trainers"
 
 
 class Timings(models.Model):
@@ -31,9 +31,9 @@ class Timings(models.Model):
 
     def __str__(self):
         return self.Timeslots
-    class Meta:
-        verbose_name_plural="Timings"
 
+    class Meta:
+        verbose_name_plural = "Timings"
 
 
 class Batch(models.Model):
@@ -42,9 +42,9 @@ class Batch(models.Model):
 
     def __str__(self):
         return self.Batch_name
-    class Meta:
-        verbose_name_plural="Batches"
 
+    class Meta:
+        verbose_name_plural = "Batches"
 
 
 class Comp_Brand(models.Model):
@@ -52,30 +52,30 @@ class Comp_Brand(models.Model):
 
     def __str__(self):
         return self.Brand
-    class Meta:
-        verbose_name_plural="Computer Brands"
 
+    class Meta:
+        verbose_name_plural = "Computer Brands"
 
 
 class Laptop(models.Model):
-    Lap_code = models.IntegerField()
+    Lap_code = models.CharField(max_length=50)
     Lap_brand = models.ForeignKey(Comp_Brand, on_delete=models.CASCADE)
     Lap_ownership = models.IntegerField(choices=ownership, null=False)
 
-    # def __str__(self):
-    #     return self.Lap_brand
-    class Meta:
-        verbose_name_plural="Laptops"
+    def __str__(self):
+        return self.Lap_code
 
+    class Meta:
+        verbose_name_plural = "Laptops"
 
 
 class Desktop(models.Model):
-    Desk_code = models.IntegerField()
+    Desk_code = models.CharField(max_length=50)
     Desk_brand = models.ForeignKey(Comp_Brand, on_delete=models.CASCADE)
     Desk_ownership = models.IntegerField(choices=ownership, null=False)
 
     def __str__(self):
-        return self.Desk_brand
-    class Meta:
-        verbose_name_plural="Desktops"
+        return self.Desk_code
 
+    class Meta:
+        verbose_name_plural = "Desktops"
