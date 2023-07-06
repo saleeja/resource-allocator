@@ -79,3 +79,33 @@ class Desktop(models.Model):
 
     class Meta:
         verbose_name_plural = "Desktops"
+
+
+class Classrooms(models.Model):
+    cls_Rooms = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.cls_Rooms
+
+    class Meta:
+        verbose_name_plural = "Classrooms"
+
+
+class Conference_rooms(models.Model):
+    cnfrnc_rooms = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.cnfrnc_rooms
+
+    class Meta:
+        verbose_name_plural = "Conference Rooms"
+
+
+# class Rooms(models.Model):
+#     cls_room = models.ForeignKey(Classrooms, on_delete=models.CASCADE)
+#     cnfrnc_room = models.ForeignKey(Conference_rooms, on_delete=models.CASCADE)
+
+#     class Meta:
+#         verbose_name_plural = "Rooms"
+
+
