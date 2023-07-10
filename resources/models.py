@@ -3,6 +3,8 @@ from django.db import models
 # Create your models here.
 
 ownership = ((0, "owned"), (1, "rented"))
+category = ((0, "Laptop"), (1, "Desktop"))
+room_type = ((0, "Classroom"), (1, "Conference Rooms"))
 
 
 class Course(models.Model):
@@ -26,19 +28,21 @@ class Trainer(models.Model):
         verbose_name_plural = "Trainers"
 
 
-class Timings(models.Model):
-    Timeslots = models.CharField(max_length=220)
+# class Timings(models.Model):
 
-    def __str__(self):
-        return self.Timeslots
+#     Start_time = models.TimeField()
+#     End_time = models.TimeField()
 
-    class Meta:
-        verbose_name_plural = "Timings"
+#     def __str__(self):
+#         return self.Start_time, self.End_time
+
+#     class Meta:
+#         verbose_name_plural = "Timings"
 
 
 class Batch(models.Model):
     Batch_name = models.CharField(max_length=220)
-    Timeslots = models.ForeignKey(Timings, on_delete=models.CASCADE)
+    # Timeslots = models.ForeignKey(Timings, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.Batch_name
@@ -57,55 +61,26 @@ class Comp_Brand(models.Model):
         verbose_name_plural = "Computer Brands"
 
 
-class Laptop(models.Model):
-    Lap_code = models.CharField(max_length=50)
-    Lap_brand = models.ForeignKey(Comp_Brand, on_delete=models.CASCADE)
-    Lap_ownership = models.IntegerField(choices=ownership, null=False)
+class Computer(models.Model):
+    Comp_code = models.CharField(max_length=50)
+    Category = models.IntegerField(choices=category, null=False)
+    Brand = models.ForeignKey(Comp_Brand, on_delete=models.CASCADE)
+    Type = models.IntegerField(choices=ownership, null=False)
+    Assigned_trainer = models.ForeignKey(Trainer, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.Lap_code
+        return self.Comp_code
 
     class Meta:
-        verbose_name_plural = "Laptops"
+        verbose_name_plural = "Computers"
 
 
-class Desktop(models.Model):
-    Desk_code = models.CharField(max_length=50)
-    Desk_brand = models.ForeignKey(Comp_Brand, on_delete=models.CASCADE)
-    Desk_ownership = models.IntegerField(choices=ownership, null=False)
+class Rooms(models.Model):
+    Room_name: models.CharField(max_length=100)
+    Room_type: models.IntegerField(choices=room_type, null=False)
 
     def __str__(self):
-        return self.Desk_code
+        return self.Room_name
 
     class Meta:
-        verbose_name_plural = "Desktops"
-
-
-class Classrooms(models.Model):
-    cls_Rooms = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.cls_Rooms
-
-    class Meta:
-        verbose_name_plural = "Classrooms"
-
-
-class Conference_rooms(models.Model):
-    cnfrnc_rooms = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.cnfrnc_rooms
-
-    class Meta:
-        verbose_name_plural = "Conference Rooms"
-
-
-# class Rooms(models.Model):
-#     cls_room = models.ForeignKey(Classrooms, on_delete=models.CASCADE)
-#     cnfrnc_room = models.ForeignKey(Conference_rooms, on_delete=models.CASCADE)
-
-#     class Meta:
-#         verbose_name_plural = "Rooms"
-
-
+        verbose_name_plural = "Rooms"
