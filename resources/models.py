@@ -28,24 +28,29 @@ class Trainer(models.Model):
         verbose_name_plural = "Trainers"
 
 
-# class Timings(models.Model):
+class Timings(models.Model):
 
-#     Start_time = models.TimeField()
-#     End_time = models.TimeField()
+    Start_time = models.TimeField()
+    End_time = models.TimeField()
 
-#     def __str__(self):
-#         return self.Start_time, self.End_time
+    # def __str__(self):
+    #  return str(self.Start_time)
 
-#     class Meta:
-#         verbose_name_plural = "Timings"
+    def __str__(self):
+        return f"{self.Start_time} - {self.End_time}"
+    
+    class Meta:
+        verbose_name_plural = "Timings"
 
 
 class Batch(models.Model):
     Batch_name = models.CharField(max_length=220)
-    # Timeslots = models.ForeignKey(Timings, on_delete=models.CASCADE)
+    Timeslots = models.ForeignKey(Timings, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.Batch_name
+    
+
 
     class Meta:
         verbose_name_plural = "Batches"
@@ -76,11 +81,19 @@ class Computer(models.Model):
 
 
 class Rooms(models.Model):
-    Room_name: models.CharField(max_length=100)
-    Room_type: models.IntegerField(choices=room_type, null=False)
+    Room_name= models.CharField(max_length=100)
+    Room_type= models.IntegerField(choices=room_type, null=False)
 
     def __str__(self):
         return self.Room_name
 
     class Meta:
         verbose_name_plural = "Rooms"
+
+
+# class Student(models.Model):
+#     Std_name=models.CharField(max_length=150)
+#     Course=models.ForeignKey(Course, on_delete=models.CASCADE)
+#     Batch=models.ForeignKey(Batch,on_delete=models.CASCADE)
+#     Timings=models.ForeignKey(Timings,on_delete=models.CASCADE)
+#     Trainer=models.ForeignKey(Trainer,on_delete=models.CASCADE)

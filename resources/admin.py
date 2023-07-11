@@ -4,7 +4,7 @@ from .models import (
     Batch,
     Comp_Brand,
     Trainer,
-    # Timings,
+    Timings,
     Computer,
     Rooms,
 )
@@ -20,6 +20,7 @@ admin.site.register(Course, Adminnn)
 admin.site.register(Batch)
 admin.site.register(Comp_Brand)
 admin.site.register(Trainer)
-# admin.site.register(Timings)
+admin.site.register(Timings)
 admin.site.register(Computer)
 admin.site.register(Rooms)
+    
