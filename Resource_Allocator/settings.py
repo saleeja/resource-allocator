@@ -80,10 +80,10 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
         "NAME": "resource_allocator",
-        "HOST": "localhost",
-        "USER": "root",
-        "PORT": "3306",
-        "PASSWORD": "sali",
+        'USER':'root',
+        'PASSWORD':'Rjth@1097',
+        'PORT':'3306',
+        'HOST':'localhost'
     }
 }
 

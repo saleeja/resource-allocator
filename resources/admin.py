@@ -4,7 +4,7 @@ from .models import (
     Batch,
     Comp_Brand,
     Trainer,
-    # Timings,
+    Timings,
     Computer,
     Rooms,
 )
@@ -12,14 +12,14 @@ from .models import (
 # Register your models here.
 
 
-class Adminnn(admin.ModelAdmin):
-    title = ["", "", ""]
+class Computer_admin(admin.ModelAdmin):
+    pass
 
 
-admin.site.register(Course, Adminnn)
+admin.site.register(Course, Computer_admin)
 admin.site.register(Batch)
 admin.site.register(Comp_Brand)
 admin.site.register(Trainer)
-# admin.site.register(Timings)
+admin.site.register(Timings)
 admin.site.register(Computer)
 admin.site.register(Rooms)
