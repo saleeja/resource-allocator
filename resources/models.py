@@ -44,9 +44,10 @@ class Timings(models.Model):
 
 
 class Batch(models.Model):
+    Timeslot = models.ForeignKey(Timings, on_delete=models.CASCADE)
+    Course_Name = models.ForeignKey(Course, on_delete=models.CASCADE)
     Batch_name = models.CharField(max_length=220, blank=True)
-    Timeslots = models.ForeignKey(Timings, on_delete=models.CASCADE)
-    CourseName = models.ForeignKey(Course, on_delete=models.CASCADE)
+    Start_date = models.DateField()
 
     def __str__(self):
         return self.Batch_name
@@ -56,7 +57,8 @@ class Batch(models.Model):
             # Generate the Batch_name based on the associated Timeslots
             course_name = self.CourseName.Course
             start_time = self.Timeslots.Start_time
-            batch_name = f"{course_name}{start_time.strftime('%H')}Batch"
+            started = self.Start_date
+            batch_name = f"{started.strftime('%b%d')}-{course_name}-{start_time.strftime('%H')}-Offline-Batch"
             self.Batch_name = batch_name
         super().save(*args, **kwargs)
 
@@ -81,6 +83,10 @@ class Computer(models.Model):
     Type = models.IntegerField(choices=ownership, null=False)
     Assigned_trainer = models.ForeignKey(Trainer, on_delete=models.CASCADE)
     serial_number = models.CharField(max_length=50, blank=True)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # self.fields['serial_number'].disabled = True
 
     def __str__(self):
         return self.serial_number
@@ -115,9 +121,55 @@ class Rooms(models.Model):
         verbose_name_plural = "Rooms"
 
 
-# class Student(models.Model):
-#     Std_name=models.CharField(max_length=150)
-#     Course=models.ForeignKey(Course, on_delete=models.CASCADE)
-#     Batch=models.ForeignKey(Batch,on_delete=models.CASCADE)
-#     Timings=models.ForeignKey(Timings,on_delete=models.CASCADE)
-#     Trainer=models.ForeignKey(Trainer,on_delete=models.CASCADE)
+class Student(models.Model):
+
+    laptop = ((0, "Self"), (1, "OTS owned"))
+
+    Student_name = models.CharField(max_length=150)
+    Batch = models.ForeignKey(Batch, on_delete=models.CASCADE)
+    Trainer_Name = models.ForeignKey(Trainer, on_delete=models.CASCADE)
+    Laptop_used = models.IntegerField(choices=laptop, null=False)
+
+    def __str__(self):
+        return self.Student_name
+
+    class Meta:
+        verbose_name_plural = "Students"
+
+
+class Trainer_Allocation(models.Model):
+    Trainer_Name = models.ForeignKey(Trainer, on_delete=models.CASCADE)
+    Room_Allocated = models.ForeignKey(Rooms, on_delete=models.CASCADE)
+    Timing = models.ForeignKey(Timings, on_delete=models.CASCADE)
+    Batch_Name = models.ForeignKey(Batch, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.Trainer_Name}"
+
+    class Meta:
+        verbose_name_plural = "Trainer Allocation"
+
+
+class Room_Allocation(models.Model):
+    Room = models.ForeignKey(Rooms, on_delete=models.CASCADE)
+    Trainer_Name = models.ForeignKey(Trainer, on_delete=models.CASCADE)
+    Timeslot = models.ForeignKey(Timings, on_delete=models.CASCADE)
+    Batch = models.ForeignKey(Batch, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.Room}"
+
+    class Meta:
+        verbose_name_plural = "Room Allocation"
+
+
+class Computer_Allocation(models.Model):
+    Computer = models.ForeignKey(Computer, on_delete=models.CASCADE)
+    Assigned_Student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    Trainer = models.ForeignKey(Trainer, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.Computer}"
+
+    class Meta:
+        verbose_name_plural = "Computer Allocation"
