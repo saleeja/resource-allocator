@@ -2,6 +2,9 @@ from django.db import models
 
 # Create your models here.
 
+ownership = ((0, "owned"), (1, "rented"))
+# category = ((0, "Laptop"), (1, "Desktop"))
+room_type = ((0, "Classroom"), (1, "Conference Rooms"))
 
 
 class Course(models.Model):
@@ -15,11 +18,11 @@ class Course(models.Model):
 
 
 class Trainer(models.Model):
-    Trainer_Name = models.CharField(max_length=220)
+    TrainerName = models.CharField(max_length=220)
     Course = models.ForeignKey(Course, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.Trainer_Name
+        return self.TrainerName
 
     class Meta:
         verbose_name_plural = "Trainers"
@@ -40,9 +43,10 @@ class Timings(models.Model):
 
 
 class Batch(models.Model):
-    Batch_name = models.CharField(max_length=220, blank=True)
-    Timeslots = models.ForeignKey(Timings, on_delete=models.CASCADE)
+    Timeslot = models.ForeignKey(Timings, on_delete=models.CASCADE)
     Course_Name = models.ForeignKey(Course, on_delete=models.CASCADE)
+    Batch_name = models.CharField(max_length=220, blank=True)
+    Start_date = models.DateField()
 
     def __str__(self):
         return self.Batch_name
@@ -51,8 +55,9 @@ class Batch(models.Model):
         if not self.Batch_name:
             # Generate the Batch_name based on the associated Timeslots
             course_name = self.Course_Name.Course
-            start_time = self.Timeslots.Start_time
-            batch_name = f"{course_name}{start_time.strftime('%I%p')}Batch"
+            start_time = self.Timeslot.Start_time
+            started = self.Start_date
+            batch_name = f"{started.strftime('%b%d')}-{course_name}-{start_time.strftime('%H')}-Offline-Batch"
             self.Batch_name = batch_name
         super().save(*args, **kwargs)
 
@@ -71,14 +76,16 @@ class Comp_Brand(models.Model):
 
 
 class Computer(models.Model):
-    ownership = ((0, "owned"), (1, "rented"))
-
     # Comp_code = models.CharField(max_length=50)
     # Category = models.IntegerField(choices=category, null=False)
     Brand = models.ForeignKey(Comp_Brand, on_delete=models.CASCADE)
     Type = models.IntegerField(choices=ownership, null=False)
     Assigned_trainer = models.ForeignKey(Trainer, on_delete=models.CASCADE)
     serial_number = models.CharField(max_length=50, blank=True)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # self.fields['serial_number'].disabled = True
 
     def __str__(self):
         return self.serial_number
@@ -92,7 +99,6 @@ class Computer(models.Model):
                 .first()
             )
             if last_serial_number:
-                
                 last_number = int(last_serial_number[3:])
                 new_number = last_number + 1
             else:
@@ -107,9 +113,6 @@ class Computer(models.Model):
 
 
 class Rooms(models.Model):
-
-    room_type = ((0, "Classroom"), (1, "Conference Rooms"))
-
     Room_name = models.CharField(max_length=100)
     Room_type = models.IntegerField(choices=room_type, null=False)
 
@@ -121,24 +124,57 @@ class Rooms(models.Model):
 
 
 class Student(models.Model):
+    laptop = ((0, "Self"), (1, "OTS owned"))
 
-    laptop = ((0, "Self"), (1, "OTS"))
-
-    Std_name = models.CharField(max_length=150)
+    Student_name = models.CharField(max_length=150)
     Batch = models.ForeignKey(Batch, on_delete=models.CASCADE)
-    Trainer = models.ForeignKey(Trainer, on_delete=models.CASCADE)
-    Laptop = models.IntegerField(choices=laptop, null=False)
-    # Computer = models.ForeignKey(Computer, on_delete=models.CASCADE, blank=True)
-    temp = models.CharField(max_length=100, blank=True)
+    Trainer_Name = models.ForeignKey(Trainer, on_delete=models.CASCADE)
+    Laptop_used = models.IntegerField(choices=laptop, null=False)
+    computer_allocation_link=models.CharField(max_length=100,blank=True)
+    registered= models.BooleanField(default=False)
+    def isregistered(self):
+        return self.registered
 
     def __str__(self):
-        return self.Std_name
-
-    def save(self, *args, **kwargs):
-        if self.Laptop == 1:
-            Ots_lap = Computer.serial_number
-            self.temp = Ots_lap
-        super().save(*args, **kwargs)
+        return self.Student_name
 
     class Meta:
         verbose_name_plural = "Students"
+
+
+class Trainer_Allocation(models.Model):
+    Trainer_Name = models.ForeignKey(Trainer, on_delete=models.CASCADE)
+    Room_Allocated = models.ForeignKey(Rooms, on_delete=models.CASCADE)
+    Timing = models.ForeignKey(Timings, on_delete=models.CASCADE)
+    Batch_Name = models.ForeignKey(Batch, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.Trainer_Name}"
+
+    class Meta:
+        verbose_name_plural = "Trainer Allocation"
+
+
+class Room_Allocation(models.Model):
+    Room = models.ForeignKey(Rooms, on_delete=models.CASCADE)
+    Trainer_Name = models.ForeignKey(Trainer, on_delete=models.CASCADE)
+    Timeslot = models.ForeignKey(Timings, on_delete=models.CASCADE)
+    Batch = models.ForeignKey(Batch, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.Room}"
+
+    class Meta:
+        verbose_name_plural = "Room Allocation"
+
+
+class Computer_Allocation(models.Model):
+    Computer = models.ForeignKey(Computer, on_delete=models.CASCADE)
+    Assigned_Student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    Trainer = models.ForeignKey(Trainer, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.Computer}"
+
+    class Meta:
+        verbose_name_plural = "Computer Allocation"
