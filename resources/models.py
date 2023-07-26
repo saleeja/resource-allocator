@@ -2,10 +2,6 @@ from django.db import models
 
 # Create your models here.
 
-ownership = ((0, "owned"), (1, "rented"))
-# category = ((0, "Laptop"), (1, "Desktop"))
-room_type = ((0, "Classroom"), (1, "Conference Rooms"))
-
 
 class Course(models.Model):
     Course = models.CharField(max_length=220)
@@ -77,8 +73,9 @@ class Comp_Brand(models.Model):
 
 
 class Computer(models.Model):
-    # Comp_code = models.CharField(max_length=50)
-    # Category = models.IntegerField(choices=category, null=False)
+
+    ownership = ((0, "owned"), (1, "rented"))
+
     Brand = models.ForeignKey(Comp_Brand, on_delete=models.CASCADE)
     Type = models.IntegerField(choices=ownership, null=False)
     Assigned_trainer = models.ForeignKey(Trainer, on_delete=models.CASCADE)
@@ -111,6 +108,9 @@ class Computer(models.Model):
 
 
 class Rooms(models.Model):
+
+    room_type = ((0, "Classroom"), (1, "Conference Rooms"))
+
     Room_name = models.CharField(max_length=100)
     Room_type = models.IntegerField(choices=room_type, null=False)
 
